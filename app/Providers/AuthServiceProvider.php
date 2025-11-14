@@ -4,7 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-
+use \App\Policies\ContactPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         //
+        \App\Models\Contact::class=> ContactPolicy::class,
     ];
 
     /**

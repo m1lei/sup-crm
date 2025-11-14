@@ -46,7 +46,7 @@
         <form action="{{ route('contact.destroy', $contact) }}" method="POST" style="display:inline">
             @csrf
             @method('DELETE')
-            <button class="btn btn-sm btn-danger" onclick="return confirm('Удалить контакт?')">
+            <button class="border-t-neutral-900" onclick="return confirm('Удалить контакт?')">
                 Удалить
             </button>
         </form>

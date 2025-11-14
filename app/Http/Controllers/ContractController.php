@@ -13,10 +13,16 @@ class ContractController extends Controller
      */
     public function index(Request $request)
     {
-        $id = $request->user()['id'];//получить id текущего пользователя
+        $user = $request->user();
+        $id = $user['id'];
 
-        var_dump($id);
-        $contacts = Contact::where('user_id', $id)->get();
+        if ($user->isAdmin()) {
+            $contacts = Contact::all();
+        }else{
+            $contacts = Contact::where('user_id', $id)->get();
+        }
+
+
         return view('contact.index',compact('contacts'));
     }
 
@@ -25,6 +31,7 @@ class ContractController extends Controller
      */
     public function create()
     {
+
         return view('contact.create');
     }
 
@@ -46,7 +53,8 @@ class ContractController extends Controller
         ]);
         $validateDate['user_id'] = $id;
 
-        $contact = Contact::create($validateDate);
+        Contact::create($validateDate);
+
         return redirect()->route('contact.index')->with('sussec','Запись сохранена');
     }
 
@@ -57,6 +65,8 @@ class ContractController extends Controller
     {
         //
         $contact = Contact::findOrFail($id);
+        $this->authorize('view', $contact);
+
         return view('contact.show',compact('contact'));
     }
 
@@ -66,6 +76,7 @@ class ContractController extends Controller
     public function edit(string $id)
     {
         $contact = Contact::findOrFail($id);
+        $this->authorize('view', $contact);
 
         return view('contact.edit',compact('contact'));
     }
@@ -102,6 +113,7 @@ class ContractController extends Controller
     {
         //
         $contact = Contact::findOrFail($id);
+        $this->authorize('view', $contact);
 
         $contact->delete();
 
