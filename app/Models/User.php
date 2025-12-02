@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function isUser():bool
     {
-        return $this->role === "user";
+        return ($this->role === "user");
     }
 }

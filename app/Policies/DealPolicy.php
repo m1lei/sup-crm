@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ContactPolicy
+class DealPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -14,18 +14,16 @@ class ContactPolicy
     public function viewAny(User $user): bool
     {
         //
-
         return $user->isAdmin() || $user->isUser();
     }
 
     /**
      * Determine whether the user can view the model.
-     * либо пропускает дальше либо отдает 403
      */
-    public function view(User $user, Contact $contact): bool
+    public function view(User $user, Deal $deal): bool
     {
         //
-        return $user->isAdmin() || $contact->user_id === $user->id;
+        return $user->isAdmin() || $user->id === $deal->user_id;
     }
 
     /**
@@ -34,31 +32,31 @@ class ContactPolicy
     public function create(User $user): bool
     {
         //
-        return $user->isAdmin() || $user->isUser();
+        return $user->isUser() || $user->isAdmin();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Contact $contact): bool
+    public function update(User $user, Deal $deal): bool
     {
         //
-        return $user->isAdmin() || $contact->user_id === $user->id;
+        return $user->isAdmin() || $user->id === $deal->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Contact $contact): bool
+    public function delete(User $user, Deal $deal): bool
     {
         //
-        return $user->isAdmin() || $contact->user_id === $user->id;
+        return $user->isAdmin() || $user->id === $deal->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Contact $contact): bool
+    public function restore(User $user, Deal $deal): bool
     {
         //
     }
@@ -66,7 +64,7 @@ class ContactPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Contact $contact): bool
+    public function forceDelete(User $user, Deal $deal): bool
     {
         //
     }

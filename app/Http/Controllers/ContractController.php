@@ -13,8 +13,11 @@ class ContractController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Contact::class);
+
         $user = $request->user();
         $id = $user['id'];
+
 
         if ($user->isAdmin()) {
             $contacts = Contact::all();
@@ -31,7 +34,7 @@ class ContractController extends Controller
      */
     public function create()
     {
-
+        $this->authorize('create', Contact::class);
         return view('contact.create');
     }
 
@@ -41,6 +44,7 @@ class ContractController extends Controller
     public function store(Request $request)
     {
         //
+        $this->authorize('create', Contact::class);
         $id = $request->user()['id'];//получить id текущего пользователя
 
         $validateDate = $request->validate([
@@ -50,7 +54,13 @@ class ContractController extends Controller
             'phone' => 'required',
             'company' => 'required',
             'note' => 'required',
-        ]);
+        ],
+         [
+             'required'=>'поле обязательно для заполнения',
+             'email' => 'Некоректный email',
+             'unique'=>'такой email уже существует',
+             'max' => 'слишком длинное название'
+         ]);
         $validateDate['user_id'] = $id;
 
         Contact::create($validateDate);
@@ -76,7 +86,7 @@ class ContractController extends Controller
     public function edit(string $id)
     {
         $contact = Contact::findOrFail($id);
-        $this->authorize('view', $contact);
+        $this->authorize('update', $contact);
 
         return view('contact.edit',compact('contact'));
     }
@@ -87,8 +97,8 @@ class ContractController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $user_id = $request->user()['id'];
         $contact = Contact::findOrFail($id);
+        $this->authorize('update', $contact);
 
         $validateDate = $request->validate([
             'first_name' => 'required|max:50',
@@ -98,11 +108,10 @@ class ContractController extends Controller
             'company' => 'required',
             'note' => 'required',
         ]);
-        $validateDate['user_id'] = $user_id;
 
         $contact->update($validateDate);
 
-        return redirect()->route('contact.index');
+        return redirect()->route('contact.index')->with('success','контакт обновлен');
 
     }
 
@@ -113,10 +122,11 @@ class ContractController extends Controller
     {
         //
         $contact = Contact::findOrFail($id);
-        $this->authorize('view', $contact);
+
+        $this->authorize('delete', $contact);
 
         $contact->delete();
 
-        redirect()->route('contact.index');
+        return redirect()->route('contact.index');
     }
 }

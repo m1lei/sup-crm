@@ -20,9 +20,13 @@
             <td>{{$contact->phone}}</td>
             <td>{{$contact->company}}</td>
             <td>{{$contact->note}}</td>
+            <td><a href="{{ route('contact.edit',$contact->id) }}">Редактировать</a></td>
+            <td><a href="{{route('contact.show', $contact->id)}}"> Подробнее</a></td>
+            <td><a href="{{route('contact.destroy', $contact->id)}}"> Удалить TODO починить</a></td>
         </tr>
     @endforeach
     </tbody>
 </table>
+    <a href="{{route('contact.create')}}">Создать новый контак</a>
 @endsection
 
