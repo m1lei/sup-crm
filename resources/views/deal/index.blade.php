@@ -23,6 +23,7 @@
         </tr>
     @endforeach
     </tbody>
+    <a href="{{route('deal.create')}}" class="btn btn-primary">создать сделку</a>
 </table>
 
 @endsection

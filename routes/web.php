@@ -30,6 +30,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('/contact', ContractController::class);//resource сам сопоставляет методы
 
     Route::resource('/deal', \App\Http\Controllers\DealController::class);
+
+    Route::resource('/activity', \App\Http\Controllers\ActivityController::class)
+        ->only(['store','edit','update','destroy']);
+
+    Route::resource('/task', \App\Http\Controllers\TaskController::class)
+        ->only(['update','store','destroy','edit']);
 });
 
 require __DIR__.'/auth.php';

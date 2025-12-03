@@ -71,6 +71,8 @@ class DealController extends Controller
     {
         //TODO сейчас при показание ответсвенного user за сделку показывается его id нужно показывать его имя
         $this->authorize('view',$deal);
+
+        $deal->load(['activities.user', 'contact']);
         return view('deal.show',compact('deal'));
     }
 
