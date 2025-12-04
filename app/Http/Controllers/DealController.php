@@ -79,11 +79,19 @@ class DealController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Deal $deal)
+    public function edit(Deal $deal, Request $request)
     {
         //
+        $user = $request->user();
         $this->authorize('update',$deal);
-        return view('deal.edit', compact('deal'));
+
+        if ($user->isAdmin()) {
+            $contacts = Contact::all();
+        } else {
+            $contacts = Contact::where('user_id', $user->id)->get();
+        }
+
+        return view('deal.edit', compact('deal', 'contacts'));
     }
 
     /**

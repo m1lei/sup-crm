@@ -20,8 +20,9 @@ class ActivityController extends Controller
         $this->authorize('update',$deal);
 
         $validated = $request->validate([
-           'type' => 'required|in:call,email,meeting,note',
-            'note' => 'required|string'
+            'type' => 'required|in:call,email,meeting,note',
+            'note' => 'required|string',
+            'happened_at' => 'required|date'
         ]);
 
         $validated['deal_id'] = $deal->id;
@@ -51,8 +52,9 @@ class ActivityController extends Controller
         $this->authorize('update', $activity);
 
         $validate = $request->validate([
-           'type' => 'required|in:call,email,meeting,note',
-            'note' => 'required|string'
+            'type' => 'required|in:call,email,meeting,note',
+            'note' => 'required|string',
+            'happened_at' => 'required|date'
         ]);
 
         $activity->update($validate);

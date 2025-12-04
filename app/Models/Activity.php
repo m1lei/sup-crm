@@ -14,6 +14,7 @@ class Activity extends Model
         'deal_id',
         'type',
         'note',
+        'happened_at'
     ];
     public function deal()
     {
@@ -24,4 +25,9 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    //Преобразование строки из БД в объект Carbon (datetime) для удобной работы с датами
+    protected $casts = [
+      'happened_at' => 'datetime'
+    ];
 }

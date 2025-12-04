@@ -1,32 +1,41 @@
 @extends('layouts.app')
-@section('content')
-<table>
-    <thead>
-    <tr>
-        <th>имя</th>
-        <th>фамелия</th>
-        <th>email</th>
-        <th>номер</th>
-        <th>компания</th>
-        <th>Описание</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($contacts as $contact)
-        <tr>
-            <td>{{$contact->first_name}}</td>
-            <td>{{$contact->last_name}}</td>
-            <td>{{$contact->email}}</td>
-            <td>{{$contact->phone}}</td>
-            <td>{{$contact->company}}</td>
-            <td>{{$contact->note}}</td>
-            <td><a href="{{ route('contact.edit',$contact->id) }}">Редактировать</a></td>
-            <td><a href="{{route('contact.show', $contact->id)}}"> Подробнее</a></td>
-            <td><a href="{{route('contact.destroy', $contact->id)}}"> Удалить TODO починить</a></td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
-    <a href="{{route('contact.create')}}">Создать новый контак</a>
-@endsection
 
+@section('content')
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Контакты</h1>
+            <a href="{{ route('contact.create') }}" class="btn btn-primary">Новый контакт</a>
+        </div>
+
+        @if($contacts->isEmpty())
+            <p class="text-muted">Контактов пока нет.</p>
+        @else
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Компания</th>
+                    <th>Email</th>
+                    <th>Телефон</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($contacts as $c)
+                    <tr>
+                        <td>{{ $c->first_name }} {{ $c->last_name }}</td>
+                        <td>{{ $c->company }}</td>
+                        <td>{{ $c->email }}</td>
+                        <td>{{ $c->phone }}</td>
+                        <td class="text-end">
+                            <a href="{{ route('contact.show', $c->id) }}" class="btn btn-sm btn-outline-secondary">
+                                Открыть
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+@endsection

@@ -6,15 +6,42 @@ use App\Models\Deal;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use function Symfony\Component\String\b;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $user = $request->user();
+
+        $query = Task::where('assignee_id',$user->id);
+
+        if ($request->has('status') && $request->status !== 'all'){
+            $query->where('status', $request->status);
+        }
+        if ($request->has('date') && $request->date !== 'all'){
+            $today = now()->startOfDay();
+
+            switch ($request->date){
+                case 'overdue':
+                    $query->where('deadline_at', '<',$today);
+                    break;
+                case 'today':
+                    $query->whereDate('deadline_at','=',$today);
+                    break;
+                case 'future':
+                    $query->where('deadline',">",$today);
+                    break;
+            }
+        }
+
+        $task = $query->orderBy('deadline_at')->get();
+
+        return view('task.index',compact('task'));
     }
 
     /**
@@ -66,7 +93,7 @@ class TaskController extends Controller
 
         $task->update($validate);
         Log::info('Redirect to Deal ID' . $task->deal_id);
-        return redirect()->route('deal.show',$task->deal_id);
+        return redirect()->route('task.index',$task->deal_id);
     }
 
     /**

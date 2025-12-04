@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
         ->only(['store','edit','update','destroy']);
 
     Route::resource('/task', \App\Http\Controllers\TaskController::class)
-        ->only(['update','store','destroy','edit']);
+        ->only(['update','store','destroy','edit','index']);
 });
 
 require __DIR__.'/auth.php';

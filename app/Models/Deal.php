@@ -29,11 +29,11 @@ class Deal extends Model
 
     public function activities()
     {
-        return $this->hasMany(Activity::class);
+        return $this->hasMany(Activity::class)->orderByDesc('happened_at');
     }
 
     public function tasks()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->orderByDesc('deadline_at');
     }
 }

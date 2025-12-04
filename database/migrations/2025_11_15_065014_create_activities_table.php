@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('deal_id')->constrained()->cascadeOnDelete();
             $table->enum('type',['call','email','meeting','note']);
             $table->text('note');
+            $table->dateTime('happened_at')->index();
             $table->timestamps();
         });
     }
