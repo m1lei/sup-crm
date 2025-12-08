@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">Mini CRM</a>
+        <a class="navbar-brand" href="{{ route('dashboard.index') }}">Mini CRM</a>
 
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
