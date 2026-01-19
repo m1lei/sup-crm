@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Activity\CreateActivityActions;
+use App\Actions\Activity\UpdateActivityAction;
+use App\Http\Requests\ActivityStoreActivityRequest;
+use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use App\Models\Deal;
 use Illuminate\Http\Request;
@@ -12,25 +16,12 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ActivityStoreActivityRequest $request, CreateActivityActions $actions)
     {
         //
-        $deal = Deal::findOrFail($request->input('deal_id'));
+        $actions->handle($request->validated(), $request->user()->id);
 
-        $this->authorize('update',$deal);
-
-        $validated = $request->validate([
-            'type' => 'required|in:call,email,meeting,note',
-            'note' => 'required|string',
-            'happened_at' => 'required|date'
-        ]);
-
-        $validated['deal_id'] = $deal->id;
-        $validated['user_id'] = $request->user()->id;
-
-        Activity::create($validated);
-
-        return redirect()->route('deal.show', $deal);
+        return redirect()->route('deal.show', $request->deal_id);
     }
     /**
      * Show the form for editing the specified resource.
@@ -46,18 +37,9 @@ class ActivityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Activity $activity)
+    public function update(UpdateActivityRequest $request,UpdateActivityAction $actionUpdate, Activity $activity)
     {
-        //
-        $this->authorize('update', $activity);
-
-        $validate = $request->validate([
-            'type' => 'required|in:call,email,meeting,note',
-            'note' => 'required|string',
-            'happened_at' => 'required|date'
-        ]);
-
-        $activity->update($validate);
+        $actionUpdate->handle($request->validated(), $activity);
 
         return redirect()->route('deal.show',$activity->deal_id);
     }

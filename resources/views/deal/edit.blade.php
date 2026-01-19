@@ -48,7 +48,7 @@
                 <label for="deadline_at" class="form-label">Закончить до</label>
                 <input type="date" name="deadline_at" id="deadline_at"
                        class="form-control"
-                       value="{{ old('deadline_at', $deal->deadline_at?->format('Y-m-d')) }}">
+                       value="{{ old('deadline_at', $deal->deadline_at) }}">
             </div>
 
             <button type="submit" class="btn btn-primary">Сохранить</button>
