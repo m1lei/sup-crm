@@ -82,6 +82,9 @@
                             </a>
                         </div>
                     </div>
+                    <div class="mt-4">
+                        {{ $task->links() }}
+                    </div>
 
                     {{-- кнопки --}}
                     <div class="text-end">

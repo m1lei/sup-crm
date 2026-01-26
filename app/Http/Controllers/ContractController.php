@@ -2,29 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContractRequest;
+use App\Http\Requests\UpdateContractRequest;
 use App\Models\Contact;
 use Illuminate\Http\Request;
-
+use App\Service\ContactService;
 
 class ContractController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, ContactService $service)
     {
         $this->authorize('viewAny', Contact::class);
 
         $user = $request->user();
-        $id = $user['id'];
 
-
-        if ($user->isAdmin()) {
-            $contacts = Contact::all();
-        }else{
-            $contacts = Contact::where('user_id', $id)->get();
-        }
-
+        $contacts = $service->getContractsForUsers($user);
 
         return view('contact.index',compact('contacts'));
     }
@@ -41,29 +36,11 @@ class ContractController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContractRequest $request, ContactService $service)
     {
-        //
-        $this->authorize('create', Contact::class);
-        $id = $request->user()['id'];//получить id текущего пользователя
+        //validated
+        $service->CreateContracts($request->validated(), $request->user()->id);
 
-        $validateDate = $request->validate([
-            'first_name' => 'required|max:50',
-            'last_name' => 'required|max:50',
-            'email' => 'required|email|unique:contacts',
-            'phone' => 'required',
-            'company' => 'required',
-            'note' => 'required',
-        ],
-         [
-             'required'=>'поле обязательно для заполнения',
-             'email' => 'Некоректный email',
-             'unique'=>'такой email уже существует',
-             'max' => 'слишком длинное название'
-         ]);
-        $validateDate['user_id'] = $id;
-
-        Contact::create($validateDate);
 
         return redirect()->route('contact.index')->with('sussec','Запись сохранена');
     }
@@ -71,10 +48,9 @@ class ContractController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Contact $contact)
     {
         //
-        $contact = Contact::findOrFail($id);
         $this->authorize('view', $contact);
 
         return view('contact.show',compact('contact'));
@@ -83,9 +59,8 @@ class ContractController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Contact $contact)
     {
-        $contact = Contact::findOrFail($id);
         $this->authorize('update', $contact);
 
         return view('contact.edit',compact('contact'));
@@ -93,23 +68,12 @@ class ContractController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * Contact $contact: Laravel привязывает маршрут к модели и сама делает FindOrFail по id из url
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateContractRequest $request, Contact $contact, ContactService $service)
     {
         //
-        $contact = Contact::findOrFail($id);
-        $this->authorize('update', $contact);
-
-        $validateDate = $request->validate([
-            'first_name' => 'required|max:50',
-            'last_name' => 'required|max:50',
-            'email' => 'required|email',
-            'phone' => 'required',
-            'company' => 'required',
-            'note' => 'required',
-        ]);
-
-        $contact->update($validateDate);
+        $service->updateContract($contact, $request->validated());
 
         return redirect()->route('contact.index')->with('success','контакт обновлен');
 
@@ -118,14 +82,10 @@ class ContractController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Contact $contact, ContactService $service)
     {
         //
-        $contact = Contact::findOrFail($id);
-
-        $this->authorize('delete', $contact);
-
-        $contact->delete();
+        $service->deleteContract($contact);
 
         return redirect()->route('contact.index');
     }

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DealStoreRequest;
+use App\Http\Requests\DealUpdateRequest;
 use App\Models\Contact;
 use App\Models\Deal;
+use App\Service\ContactService;
+use App\Service\DealService;
 use Illuminate\Http\Request;
 
 class DealController extends Controller
@@ -11,55 +15,38 @@ class DealController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, DealService $dealService)
     {
         //
         $this->authorize('viewAny', Deal::class);
-
         $user = $request->user();
 
-        if ($user->isAdmin()){
-            $deal = Deal::all();
-        } else{
-            $deal = Deal::where('user_id',$user->id)->get();
-        }
+        $deal = $dealService->GetDeals($user);
+
         return view('deal.index',compact('deal'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(Request $request, ContactService $contactService)
     {
         //
         $this->authorize('create', Deal::class);
         $user = $request->user();
-        if($user->isadmin()){
-            $contacts = Contact::all();
-        }else{
-            $contacts = Contact::where('user_id',$user->id)->get();
-        }
+
+        $contacts = $contactService->getContractsForUsers($user);
+
         return view('deal.create',compact('contacts'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DealStoreRequest $request, DealService $dealService)
     {
         //
-        $this->authorize('create', Deal::class);
-
-        $validateDate = $request->validate([
-            'title' => 'required|max:50',
-            'status'=> 'required|in:New,Todo,in_progress,Done',
-            'amount'=>'nullable|numeric',
-            'deadline_at'=>'nullable|date',
-            'contact_id' => 'required|exists:contacts,id',
-        ]);
-        $validateDate['user_id'] = $request->user()->id;
-
-        Deal::create($validateDate);
+        $dealService->CreateDeal($request->validated(), $request->user()->id);
 
         return redirect()->route('deal.index')->with('sussec','Запись сохранена');
     }
@@ -69,7 +56,6 @@ class DealController extends Controller
      */
     public function show(Deal $deal)
     {
-        //TODO сейчас при показание ответсвенного user за сделку показывается его id нужно показывать его имя
         $this->authorize('view',$deal);
 
         $deal->load(['activities.user', 'contact']);
@@ -79,17 +65,13 @@ class DealController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Deal $deal, Request $request)
+    public function edit(Deal $deal, Request $request, ContactService $contactService)
     {
         //
         $user = $request->user();
         $this->authorize('update',$deal);
 
-        if ($user->isAdmin()) {
-            $contacts = Contact::all();
-        } else {
-            $contacts = Contact::where('user_id', $user->id)->get();
-        }
+        $contacts = $contactService->getContractsForUsers($user);
 
         return view('deal.edit', compact('deal', 'contacts'));
     }
@@ -97,17 +79,11 @@ class DealController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Deal $deal)
+    public function update(DealUpdateRequest $request, DealService $dealService, Deal $deal)
     {
         //
-        $this->authorize('update',$deal);
-        $validateDate = $request->validate([
-            'title' => 'required|max:50',
-            'status'=> 'required|in:New,Todo,in_progress,Done',
-            'amount'=>'nullable|numeric',
-            'deadline_at'=>'nullable|date',
-        ]);
-        $deal->update($validateDate);
+        $dealService->UpdateDeal($request->validated(), $deal);
+
 
         return redirect()->route('deal.index');
 
@@ -116,12 +92,12 @@ class DealController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Deal $deal)
+    public function destroy(Deal $deal, DealService $dealService)
     {
         //
         $this->authorize('delete',$deal);
 
-        $deal->delete();
+        $dealService->DeleteDeal($deal);
 
         return redirect()->route('deal.index');
     }
