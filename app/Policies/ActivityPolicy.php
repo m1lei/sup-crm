@@ -38,7 +38,7 @@ class ActivityPolicy
     public function update(User $user, Activity $activity): bool
     {
         //
-        return $user->isAdmin() || $user->id === $activity->deal->user_id;
+        return $user->isAdmin() || $user->id === $activity->subject->user_id;
     }
 
     /**
@@ -47,7 +47,7 @@ class ActivityPolicy
     public function delete(User $user, Activity $activity): bool
     {
         //
-        return $user->isAdmin() || $user->id === $activity->deal->user_id;
+        return $user->isAdmin() || $user->id === $activity->subject->user_id;
     }
 
     /**

@@ -44,6 +44,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function activities() {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
     public function isAdmin(): bool
     {
       return ($this->role === "admin");

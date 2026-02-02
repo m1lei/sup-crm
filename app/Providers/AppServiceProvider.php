@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Contact;
+use App\Models\Deal;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //Алиас для заполнения Activity->subject_type, вместо длинных классов, короткие слова
+        Relation::enforceMorphMap([
+            'deal' => \App\Models\Deal::class,
+            'contact' => \App\Models\Contact::class,
+        ]);
     }
 }

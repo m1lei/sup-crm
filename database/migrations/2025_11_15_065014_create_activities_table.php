@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('deal_id')->constrained()->cascadeOnDelete();
+            $table->morphs('subject');
             $table->enum('type',['call','email','meeting','note']);
             $table->text('note');
             $table->dateTime('happened_at')->index();

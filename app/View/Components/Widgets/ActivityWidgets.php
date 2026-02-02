@@ -5,20 +5,22 @@ namespace App\View\Components\Widgets;
 use App\Service\DashboardService;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\Component;
 
 class ActivityWidgets extends Component
 {
     public $recentActivities;
-    public $deal;
+    public ?Model $subject;//объект модели
     /**
      * Create a new component instance.
+     * если subject = null, то возвращаются все activity
      */
-    public function __construct(DashboardService $dashboardService, $deal = null)
+    public function __construct(DashboardService $dashboardService, ?Model $subject = null)
     {
         //
-        $this->deal = $deal;
-        $this->recentActivities = $dashboardService->getActivities(auth()->user(), $deal);
+        $this->subject = $subject;
+        $this->recentActivities = $dashboardService->getActivities(auth()->user(), $subject);
     }
 
     /**

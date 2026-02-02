@@ -26,11 +26,16 @@
                 <input name="happened_at" id="happened_at" class="form-control" type="datetime-local" value="{{old('happened_at', $activity->happened_at)}}" >
             </div>
             <button type="submit" class="btn btn-primary mt-3">Сохранить изменениея</button>
-            <a href="{{ route('deal.show', $activity->deal_id) }}" class="btn btn-secondary mt-3">Назад</a>
+
+{{--            получить адрес преведущий страницы чтобы вернуть пользователя назад--}}
+            <input type="hidden" name="redirect_to" value="{{url()->previous()}}">
+            <a href="{{ route('deal.show', $activity->subject) }}" class="btn btn-secondary mt-3">Назад</a>
         </form>
         <form action="{{ route('activity.destroy', $activity) }}" method="POST" class="mt-3">
             @csrf
             @method('DELETE')
+            <input type="hidden" name="redirect_to" value="{{url()->previous()}}">
+
             <button class="btn btn-danger"
                     onclick="return confirm('Удалить активность?')">
                 Удалить

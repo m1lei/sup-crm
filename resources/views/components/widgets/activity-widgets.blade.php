@@ -36,17 +36,18 @@
                                         ({{ $activity->user->name }})
                                     </span>
                             @endif
-
-                            @if($activity->deal)
+                            @if($activity->subject)
                                 <div class="small mt-1">
                                     Сделка:
-                                    <a href="{{ route('deal.show', $activity->deal_id) }}">
-                                        {{ $activity->deal->title }}
+                                    <a href="{{ route('deal.show', $activity->subject->id) }}">
+                                        {{ $activity->subject->title }}
                                     </a>
-                                    @if($activity->deal->contact)
+                                    @if($activity->subject->contact)
                                         • Клиент:
-                                        {{ $activity->deal->contact->first_name }}
-                                        {{ $activity->deal->contact->last_name }}
+                                    <a href="{{route('contact.edit', $activity->subject->contact->id)}}">
+                                        {{ $activity->subject->contact->first_name }}
+                                        {{ $activity->subject->contact->last_name }}</a>
+
                                     @endif
                                 </div>
                             @endif

@@ -2,7 +2,8 @@
 <div>
     <form action="{{ route('activity.store') }}" method="POST" class="mb-4">
         @csrf
-        <input type="hidden" name="deal_id" value="{{ $deal->id }}">
+        <input type="hidden" name="subject_id" value="{{ $sudject->id }}">
+        <input type="hidden" name="subject_type" value="{{$sudject->getMorphClass()}}">
 
         <div class="row g-2 align-items-end">
             <div class="col-md-2">

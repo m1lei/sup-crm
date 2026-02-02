@@ -24,14 +24,11 @@ class DealStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            [
-                'user_id' => 'required',
                 'title' => 'required|max:50',
                 'status'=> 'required|in:New,Todo,in_progress,Done',
                 'amount'=>'nullable|numeric',
                 'deadline_at'=>'nullable|date',
                 'contact_id' => 'required|exists:contacts,id',
-            ]
         ];
     }
 }

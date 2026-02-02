@@ -29,7 +29,7 @@ class Deal extends Model
 
     public function activities()
     {
-        return $this->hasMany(Activity::class)->orderByDesc('happened_at');
+        return $this->morphMany(Activity::class, 'subject')->orderByDesc('happened_at');
     }
 
     public function tasks()

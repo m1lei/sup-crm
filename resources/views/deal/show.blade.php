@@ -54,9 +54,9 @@
         <div class="card-header">История активности</div>
         <div class="card-body">
             {{-- Форма создания активности --}}
-            <x-widgets.quick-action-activity :deal="$deal"/>
+            <x-widgets.quick-action-activity :sudject="$deal"/>
 
             {{-- Список активностей (timeline) --}}
-            <x-widgets.activity-widgets :deal="$deal"/>
+            <x-widgets.activity-widgets :subject="$deal"/>
     </div>
 @endsection

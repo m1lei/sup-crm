@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Deal;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -45,15 +46,38 @@ class DashboardService
             ->pluck('count', 'status');
 
     }
-    public function getActivities(User $user, $deal=null)
+
+    /**
+     * Получить список активностей с учетом прав пользователя и контекста($subject)
+     * @param User $user текущйи пользователь, фильтрация по автору
+     * @param Model|null $subject Модель, если передана фильтруем по ней, если нет то отдаем все записи
+     */
+    public function getActivities(User $user, ?Model $subject = null)
     {
-        $query = Activity::with(['deal.contact', 'user']);
-        if (!$user->isAdmin()){
+        $query = Activity::query()
+            ->with([//для каждой записи загрузить кто ее создал(Model user)
+                'user',
+                'subject' => function ($morphTo) {//как загружать данные в зависимости от типа в subject
+                    $morphTo->morphWith([
+                        Deal::class => ['contact'],//для subject Deal подгрузить еше и Model Contact
+                    ]);
+                }
+            ]);
+
+        // Ограничение прав
+        if (!$user->isAdmin()) {
             $query->where('user_id', $user->id);
         }
-        if ($deal){
-            $query->where('deal_id', $deal->id);
+
+        //Фильтр по subject только если он передан
+        if ($subject) {
+            $query->whereMorphedTo('subject', $subject);
         }
-        return $query->orderBy('created_at', 'desc')->limit(5)->get();
+
+        return $query
+            ->orderByDesc('happened_at')
+            ->limit(5)
+            ->get();
     }
+
 }

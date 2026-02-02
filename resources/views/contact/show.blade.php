@@ -46,6 +46,8 @@
                     </div>
                 </div>
             </div>
+            <x-widgets.activity-widgets :subject="$contact"/>
+            <x-widgets.quick-action-activity :sudject="$contact"/>
         </div>
     </div>
 @endsection

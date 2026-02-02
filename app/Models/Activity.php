@@ -11,14 +11,17 @@ class Activity extends Model
 
     protected $fillable = [
         'user_id',
-        'deal_id',
+        'subject_id', //id записи
+        'subject_type',//тип модели
         'type',
         'note',
         'happened_at'
     ];
-    public function deal()
+
+    //Получить модель, к которой относится активность (Deal, Contact и т.д.)
+    public function subject()
     {
-        return $this->belongsTo(Deal::class);
+        return $this->morphTo();
     }
 
     public function user()

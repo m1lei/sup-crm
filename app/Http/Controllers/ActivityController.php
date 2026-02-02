@@ -19,9 +19,9 @@ class ActivityController extends Controller
     public function store(ActivityStoreActivityRequest $request, CreateActivityActions $actions)
     {
         //
-        $actions->handle($request->validated(), $request->user()->id);
+        $actions->handle($request->validated(), $request->user()->id, $request->subject);
 
-        return redirect()->route('deal.show', $request->deal_id);
+        return back()->with('success', 'Activity has been created.');
     }
     /**
      * Show the form for editing the specified resource.
@@ -47,13 +47,17 @@ class ActivityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Activity $activity)
+    public function destroy(Request $request,Activity $activity)
     {
         //
         $this->authorize('delete', $activity);
+
         $activity->delete();
 
-        return redirect()->route('deal.show',$activity->deal_id);
+        if ($request->has('redirect_to')) {
+            return redirect($request->redirect_to);
+        }
 
+        return redirect()->route('dashboard')->with('success', 'Activity has been deleted.');
     }
 }

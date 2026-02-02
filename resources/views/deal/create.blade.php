@@ -31,7 +31,6 @@
                 <label for="status" class="form-label">Статус</label>
                 <select name="status" id="status" class="form-select">
                     <option value="New" {{ old('status') == 'New' ? 'selected' : '' }}>Новая</option>
-                    <option value="Todo" {{ old('status') == 'Todo' ? 'selected' : '' }}>В работе</option>
                     <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>В процессе</option>
                     <option value="Done" {{ old('status') == 'Done' ? 'selected' : '' }}>Завершена</option>
                 </select>
